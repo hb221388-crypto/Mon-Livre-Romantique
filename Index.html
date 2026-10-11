@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Livre d'Amour ❤️</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Georgia,serif;
+  text-align:center;
+  color:#fff;
+  background:linear-gradient(135deg,#45001f,#a00050,#ff5c93);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+header{padding:30px 15px 10px}
+h1{font-size:32px;text-shadow:0 0 15px #ffb6d0}
+input{
+  width:85%;
+  max-width:350px;
+  padding:14px;
+  border:2px solid pink;
+  border-radius:25px;
+  font-size:17px;
+  text-align:center;
+  outline:none;
+}
+button{
+  padding:12px 18px;
+  margin:6px;
+  border:0;
+  border-radius:25px;
+  background:#fff;
+  color:#b00050;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:hover{background:#ffd4e4}
+.book{
+  width:90%;
+  max-width:600px;
+  min-height:350px;
+  margin:20px auto;
+  padding:25px 20px;
+  background:rgba(255,255,255,.96);
+  color:#710033;
+  border-radius:20px;
+  box-shadow:0 0 30px #ff8cb8;
+  position:relative;
+  z-index:1;
+}
+#letter{font-size:20px;line-height:1.8;white-space:pre-line}
+#pageNumber{font-size:14px;color:#a00050}
+.heart{
+  position:fixed;
+  bottom:-30px;
+  animation:floatUp 7s linear forwards;
+  pointer-events:none;
+  z-index:0;
+}
+@keyframes floatUp{
+  from{transform:translateY(0) rotate(0);opacity:1}
+  to{transform:translateY(-110vh) rotate(360deg);opacity:0}
+}
+footer{padding:20px}
+</style>
+</head>
+
+<body>
+<header>
+  <h1>🌹 Mon Livre d'Amour ❤️</h1>
+  <p>Un livre rempli de tendresse, rien que pour toi.</p>
+  <input id="name" placeholder="Prénom de la personne aimée">
+  <br><br>
+  <button onclick="startBook()">Ouvrir mon livre 💌</button>
+</header>
+
+<main class="book">
+  <h2 id="title">💖 Bienvenue dans mon livre 💖</h2>
+  <p id="letter">Écris un prénom, puis appuie sur « Ouvrir mon livre » pour découvrir les lettres d'amour.</p>
+  <p id="pageNumber"></p>
+</main>
+
+<div>
+  <button onclick="previousPage()">⬅️ Précédente</button>
+  <button onclick="nextPage()">Suivante ➡️</button>
+  <br>
+  <button onclick="randomPage()">💝 Surprise</button>
+  <button onclick="toggleMusic()">🎵 Musique</button>
+</div>
+
+<footer>Fait avec amour ❤️🌹</footer>
+
+<audio id="music" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const letters = [
+`Depuis que tu es entré(e) dans ma vie, le monde semble plus beau. Ton sourire illumine mes journées et ta présence réchauffe mon cœur. Si je pouvais faire un vœu, ce serait de voir ton sourire chaque jour. ❤️`,
+
+`Mon amour, il existe des milliers de mots dans ce monde, mais aucun ne suffit pour décrire ce que je ressens pour toi. Tu es une pensée douce qui accompagne mes journées et mes rêves. 🌹`,
+
+`Si les étoiles pouvaient parler, elles raconteraient combien tu comptes pour moi. Si les fleurs pouvaient écrire, elles déposeraient ton prénom sur chaque pétale. Tu es une merveilleuse pensée dans mon cœur. ✨`,
+
+`Je ne te promets pas une vie sans difficultés. Je te promets plutôt de toujours essayer, de t'écouter, de te respecter et de partager avec toi les petits bonheurs de chaque jour. 💞`,
+
+`Quand je pense à toi, mon cœur se remplit de douceur. Même à distance, un souvenir, un message ou un simple sourire peut rendre ma journée plus belle. 💌`,
+
+`Tu es comme une rose dans un jardin magnifique : unique, précieux(se) et plein(e) de beauté. Que la vie t'offre autant de bonheur que tu en apportes autour de toi. 🌹`,
+
+`Si je pouvais t'offrir quelque chose de précieux, je t'offrirais la possibilité de te voir à travers mes yeux. Tu comprendrais alors pourquoi ta présence est si spéciale pour moi. ❤️`,
+
+`Les plus beaux moments ne sont pas toujours les plus grands. Parfois, un regard, une conversation ou un rire partagé suffit à créer un souvenir que l'on garde longtemps. 💖`,
+
+`Je souhaite que tes rêves grandissent, que tes soucis deviennent plus légers et que tu trouves chaque jour une raison de sourire. Tu mérites de belles choses et beaucoup de tendresse. 🌷`,
+
+`Voici la dernière page de ce petit livre, mais pas la fin des mots doux. Chaque jour offre une nouvelle occasion de montrer son affection, avec sincérité, respect et gentillesse. Je t'envoie mille cœurs. 💋`
+];
+
+let page = 0;
+let started = false;
+
+function startBook(){
+  const input = document.getElementById("name").value.trim();
+  if(!input){
+    alert("Écris d'abord le prénom de la personne aimée ❤️");
+    document.getElementById("name").focus();
+    return;
+  }
+  window.loveName = input;
+  started = true;
+  page = 0;
+  showPage();
+}
+
+function showPage(){
+  if(!started){
+    alert("Appuie d'abord sur « Ouvrir mon livre » ❤️");
+    return;
+  }
+  document.getElementById("title").textContent =
+    "💌 Pour " + window.loveName + " 💌";
+  document.getElementById("letter").textContent = letters[page];
+  document.getElementById("pageNumber").textContent =
+    "Page " + (page+1) + " sur " + letters.length + " ❤️";
+}
+
+function nextPage(){
+  if(!started){startBook();return;}
+  page = (page + 1) % letters.length;
+  showPage();
+}
+
+function previousPage(){
+  if(!started){startBook();return;}
+  page = (page - 1 + letters.length) % letters.length;
+  showPage();
+}
+
+function randomPage(){
+  if(!started){startBook();return;}
+  page = Math.floor(Math.random()*letters.length);
+  showPage();
+}
+
+function toggleMusic(){
+  const music = document.getElementById("music");
+  if(music.paused){
+    music.play().catch(()=>alert("La musique n'a pas pu démarrer. Réessaie."));
+  }else{
+    music.pause();
+  }
+}
+
+function createHeart(){
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.textContent = ["❤️","💖","💕","🌹","💗"][Math.floor(Math.random()*5)];
+  heart.style.left = Math.random()*100 + "vw";
+  heart.style.fontSize = (18+Math.random()*25) + "px";
+  heart.style.animationDuration = (5+Math.random()*5) + "s";
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),10000);
+}
+setInterval(createHeart,500);
+</script>
+</body>
+</html>
